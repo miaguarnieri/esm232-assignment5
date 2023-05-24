@@ -8,7 +8,7 @@
 #' @param closure canopy closure (kg C)
 #' @return derivative of population with time 
 
-dforestgrowth= function(Time, C, parms) {
+forest_growth <- function(time, C, parms) {
   
   dC = ifelse(C < parms$closure, parms$r*C, parms$g*(1 - C/K))
   

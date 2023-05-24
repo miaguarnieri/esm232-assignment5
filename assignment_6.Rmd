@@ -26,9 +26,20 @@ C <- 10
 K <- 250
 r <- 0.01
 g <- 2
+closure <- 50
 
 #run the model for 300 years using ODE solver
 
+#set up parameters
+simtimes <- seq(from = 1, to = 300)
+parms <- list(r = r, K = K, g = g, closure = closure)
+
+
+result1 <- ode(y = C, time = simtimes, func = forest_growth, parms = parms)
+
+#turn into a df for plotting
+res1_df <- as.data.frame(result1)
+colnames(res1_df) = c("time", "forest_size")
 
 ```
 
