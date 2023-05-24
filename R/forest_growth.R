@@ -1,5 +1,5 @@
 #'  Forest growth model
-#' @param time time since start
+#' @param times time since start
 #' @param C forest carbon
 #' @param parms - as list with four values, r, K, closure, g
 #' @param r intrinsic growth rate (linear growth rate once canopy closure has been reached)
@@ -8,7 +8,7 @@
 #' @param closure canopy closure (kg C)
 #' @return derivative of population with time 
 
-forest_growth <- function(time, C, parms) {
+forest_growth <- function(times, C, parms) {
   
   dC = ifelse(C < parms$closure, parms$r*C, parms$g*(1 - C/K))
   
