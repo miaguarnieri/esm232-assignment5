@@ -1,0 +1,34 @@
+---
+title: 'Assignment 6: Sobol Sensitivity Analysis'
+author: "Mia Guarnieri, Lauren Harris"
+date: "2023-05-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(deSolve)
+library(sensitivity)
+library(here)
+```
+
+# Source the function and run it for 300 years
+
+```{r sen}
+source(here("R", "forest_growth.R"))
+
+#initial forest size (carbon)
+C <- 10
+
+#initial parameters
+K <- 250
+r <- 0.01
+g <- 2
+
+#run the model for 300 years using ODE solver
+
+
+```
+
