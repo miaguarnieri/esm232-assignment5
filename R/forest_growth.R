@@ -1,7 +1,7 @@
 #'  Forest growth model
 #' @param time time since start
 #' @param C forest carbon
-#' @param parms - as list with three values, r, K, closure
+#' @param parms - as list with four values, r, K, closure, g
 #' @param r intrinsic growth rate (linear growth rate once canopy closure has been reached)
 #' @param K carrying capacity (kgC)
 #' @param g linear growth rate after closure
