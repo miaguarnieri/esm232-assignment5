@@ -103,7 +103,7 @@ c_wrapper <- function(r, K, g, closure, C, simtimes, func) {
     
     res_max <- max(results_df$C)
     
-    return(res_max)
+    return(list(max_C = res_max))
 }
 
 # now use pmap
