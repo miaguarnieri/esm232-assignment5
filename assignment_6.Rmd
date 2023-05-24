@@ -87,15 +87,6 @@ colnames(sens_C$X) = c("r", "g", "closure", "K")
 
 #gets results for 300 years (evaluating every year)
 simtimes <- seq(from = 1, to = 300)
-parms <- list(r = sens_C$X[, "r"], K = sens_C$X[, "K"], g = sens_C$X[, "g"], closure = sens_C$X[, "closure"])
-
-#turn computing our metrics into a function
-compute_metrics <- function(result) {
-  maxforest <- max(result$C)
-  idx <- which(result$C == max(result$C))[1]
-  idx <- ifelse(is.na(idx), length(result$C), idx)
-  maxyear = result$time[idx]
-  return(list(maxforest = maxforest, maxyear = maxyear))}
 
 #define a wrapper function to run solver, compute metrics, and send back results for each parameter
 c_wrapper <- function(r, K, g, closure, C, simtimes, func) {
@@ -104,9 +95,15 @@ c_wrapper <- function(r, K, g, closure, C, simtimes, func) {
     colnames(result) = c("time","C")
   
     #get metrics
-    metrics <- compute_metrics(as.data.frame(result))
+    #metrics <- compute_metrics(as.data.frame(result))
     
-    return(metrics)
+    results_df <- as.data.frame(result)
+    colnames(results_df) = c("time", "C")
+    
+    
+    res_max <- max(results_df$C)
+    
+    return(res_max)
 }
 
 # now use pmap
