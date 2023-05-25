@@ -2,11 +2,18 @@
 title: 'Assignment 6: Sobol Sensitivity Analysis'
 author: "Mia Guarnieri, Lauren Harris"
 date: "2023-05-23"
-output: html_document
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: paper
+    code_folding: hide
+    smooth_scroll: yes
+    collapsed: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
 library(deSolve)
@@ -14,7 +21,7 @@ library(sensitivity)
 library(here)
 ```
 
-# Source the function and run it for 300 years
+### Source the function and run it for 300 years
 
 ```{r sen}
 source(here("R", "forest_growth.R"))
@@ -49,14 +56,14 @@ ggplot(res1_df, aes(time, forest_size)) +
 
 ```
 
-## Run sobol sensitivity analysis
+### Run sobol sensitivity analysis
 
 Exploring estimated maximum forest size variation with the parameters:
 - pre canopy closure growth rate (r)
 - post-canopy closure growth rate (g)
 - canopy closure threshold (closure) and carrying capacity(K)
 
-```{r}
+```{r echo=FALSE, results = "hide"}
 #set up parameter sets
 np <- 2000 #number of parameters
 
@@ -101,7 +108,6 @@ c_wrapper <- function(r, g, closure, K, Cinit, times, func) {
     return(list(max_C = max_C))
 }
 
-
 #use pmap to apply wrapper to all parameter sets
 
 times = 1:300
@@ -110,17 +116,34 @@ Cinit = 10
 allresults <- as.data.frame(sens_C$X) %>% 
   pmap(c_wrapper, Cinit = Cinit, times = times, func = forest_growth)
 
-
+```
+```{r}
 # extract out results from pmap into a data frame
 allres <- allresults %>% 
   map_dfr(`[`,c("max_C"))
 
 # create boxplot
 ggplot(allres, aes(y = max_C)) +
-  geom_boxplot(size = 0.9, color = "darkgreen") +
-  labs(y = "Maximum carbon after 300 years") +
+  geom_boxplot(color = "forestgreen") +
+  labs(y = "Maximum forest size after 300 years (kg/C)") +
   theme_minimal() +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
 
+### Calculate Sobol indices
+
+```{r}
+sens_C_max = sensitivity::tell(sens_C, allres$max_C)
+
+# first-order indices (main effect without co-variance)
+rownames(sens_C_max$S) = c("r", "g", "closure", "K")
+sens_C_max$S
+
+# total sensitivity index 
+rownames(sens_C_max$T) = c("r", "g", "closure", "K")
+sens_C_max$T
+```
+
+## Discussion
+We find that variability in r, or pre canopy closure growth rate, has the greatest affect on variability in maximum forest size after 300 years. Variability in g (post canopy closure growth rate) has the second greatest affect on variability in maximum forest size, followed by the canopy closure threshold ("closure") and then carrying capacity (K). This means that the most important factors affecting the size of a forest (according to this analysis) are the growth rates of the forest rather than carrying capacity or the canopy closure threshold. Growth rates of trees may be affected by resource availability, such as precipitation and soil nutrients, which can both be impacted by climate change as increasing temperature and weather extremes reduce the suitability of many habitats globally. Under the scenario analyzed, ensuring that the conditions remain as optimal as possible for tree growth will ultimately allow land managers to maximize forest size.
